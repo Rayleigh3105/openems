@@ -149,7 +149,7 @@ public class OnRequest implements io.openems.common.websocket.OnRequest {
 	private CompletableFuture<JsonrpcResponseSuccess> handleAuthenticateWithPasswordRequest(WsData wsData,
 			AuthenticateWithPasswordRequest request) throws OpenemsNamedException {
 		if (request.usernameOpt.isPresent()) {
-			return this.handleAuthentication(wsData, request.getId(),
+			return this.handleAuthenticationCustom(wsData, request.getId(),
 					this.parent.metadata.authenticate(request.usernameOpt.get(), request.password));
 		}
 		return this.handleAuthentication(wsData, request.getId(), this.parent.metadata.authenticate(request.password));
@@ -173,6 +173,13 @@ public class OnRequest implements io.openems.common.websocket.OnRequest {
 				User.generateEdgeMetadatas(user, this.parent.metadata), user.getLanguage()));
 	}
 
+	private CompletableFuture<JsonrpcResponseSuccess> handleAuthenticationCustom(WsData wsData, UUID requestId, User user)
+			throws OpenemsNamedException {
+		wsData.setUserId(user.getId());
+		wsData.setToken(user.getToken());
+		return CompletableFuture.completedFuture(new AuthenticateResponse(requestId, user.getToken(), user,
+				User.generateEdgeMetadatas(user, this.parent.metadata), user.getLanguage()));
+	}
 	/**
 	 * Handles a {@link RegisterUserRequest}.
 	 *

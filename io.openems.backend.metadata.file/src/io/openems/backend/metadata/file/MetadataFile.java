@@ -100,6 +100,7 @@ public class MetadataFile extends AbstractMetadata implements Metadata, EventHan
 
 	private User user = this.generateUser();
 	private String path = "";
+	private Config config = null;
 
 	public MetadataFile() {
 		super("Metadata.File");
@@ -109,6 +110,7 @@ public class MetadataFile extends AbstractMetadata implements Metadata, EventHan
 	private void activate(Config config) {
 		this.log.info("Activate [path=" + config.path() + "]");
 		this.path = config.path();
+		this.config = config;
 
 		// Read the data async
 		CompletableFuture.runAsync(() -> {
@@ -123,7 +125,11 @@ public class MetadataFile extends AbstractMetadata implements Metadata, EventHan
 
 	@Override
 	public User authenticate(String username, String password) throws OpenemsNamedException {
-		return this.user = this.generateUser();
+		if (username != null && password != null) {
+			if (username.equals(this.config.username()) && password.equals(this.config.password())) {
+				return this.user = this.generateUserFromConfig(username);
+			}
+		}
 	}
 
 	@Override
@@ -237,6 +243,11 @@ public class MetadataFile extends AbstractMetadata implements Metadata, EventHan
 
 	private User generateUser() {
 		return new User(MetadataFile.USER_ID, MetadataFile.USER_NAME, UUID.randomUUID().toString(),
+				MetadataFile.LANGUAGE, MetadataFile.USER_GLOBAL_ROLE, this.edges.size() > 1, this.settings);
+	}
+
+	private User generateUserFromConfig(String username) {
+		return new User(MetadataFile.USER_ID, username, UUID.randomUUID().toString(),
 				MetadataFile.LANGUAGE, MetadataFile.USER_GLOBAL_ROLE, this.edges.size() > 1, this.settings);
 	}
 
