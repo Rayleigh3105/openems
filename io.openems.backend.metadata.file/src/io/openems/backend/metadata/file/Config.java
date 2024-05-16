@@ -11,8 +11,8 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 	@AttributeDefinition(name = "Path", description = "The path to the JSON file.")
 	String path();
 
-	@AttributeDefinition(name = "User", description = "Username of the backend user")
-	String user();
+	@AttributeDefinition(name = "Username", description = "Username of the backend user")
+	String username();
 
 	@AttributeDefinition(name = "Password", description = "Password of the backend user")
 	String password();

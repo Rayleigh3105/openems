@@ -130,6 +130,7 @@ public class MetadataFile extends AbstractMetadata implements Metadata, EventHan
 				return this.user = this.generateUserFromConfig(username);
 			}
 		}
+		throw OpenemsError.COMMON_AUTHENTICATION_FAILED.exception();
 	}
 
 	@Override
